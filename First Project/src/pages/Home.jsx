@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import './Home.css'
+import { useNavigate } from 'react-router-dom';
 export default function Home() {
     // Create a state to store the movies data
     const [movies, setMovies] = useState([]);
     const [page, setPage] = useState(0);
+    const navigate = useNavigate()
     const getMovies = async () => {
         const myHeaders = new Headers();
         const token = localStorage.getItem("token")
@@ -22,6 +24,10 @@ export default function Home() {
         // update the movies state with the data received from the API
         setMovies([...movies, ...data])
     }
+    const logout = () => {
+        localStorage.removeItem("token");
+        navigate("/login")
+    }
     useEffect(() => {
         getMovies()
     }, [page])
@@ -30,7 +36,7 @@ export default function Home() {
             <nav>
                 <h1>IMDB</h1>
                 <input type="text" placeholder="Search movies..." />
-                <button>Logout</button>
+                <button onClick={logout}>Logout</button>
             </nav>
         </header>
         <main>
@@ -40,7 +46,7 @@ export default function Home() {
                     return <div key={movie.id} className="movie">
                         <img src={movie.posterUrl} alt={movie.title} />
                         <h2>{movie.title} <span>({movie.publishedYear})</span></h2>
-                        <p>{movie.description.subString(0, 30)}...</p>
+                        <p>{movie.description.substring(0, 30)}...</p>
                     </div>
                 })}
             </div>
@@ -52,4 +58,3 @@ export default function Home() {
     </>
 
 }
-
